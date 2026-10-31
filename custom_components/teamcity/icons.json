@@ -1,0 +1,18 @@
+{
+  "entity": {
+    "button": {
+      "trigger_build": { "default": "mdi:play" }
+    },
+    "sensor": {
+      "queued_builds": { "default": "mdi:tray-full" },
+      "running_builds": { "default": "mdi:progress-clock" },
+      "last_build_status": {
+        "default": "mdi:help-circle-outline",
+        "state": {
+          "success": "mdi:check-circle-outline",
+          "failure": "mdi:alert-circle-outline"
+        }
+      }
+    }
+  }
+}

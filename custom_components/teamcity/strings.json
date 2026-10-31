@@ -1,0 +1,76 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to TeamCity",
+        "description": "Create an access token in TeamCity under Profile → Access Tokens. The token's permissions decide which projects Home Assistant can see.",
+        "data": {
+          "url": "Server URL",
+          "token": "Access token",
+          "verify_ssl": "Verify SSL certificate"
+        },
+        "data_description": {
+          "url": "For example https://teamcity.example.com",
+          "token": "A TeamCity access token. It needs permission to run builds if you want to use the trigger buttons."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate with TeamCity",
+        "description": "The access token for {url} is no longer valid. Enter a new one.",
+        "data": {
+          "token": "Access token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to TeamCity. Check the URL and that the server is reachable.",
+      "invalid_auth": "TeamCity rejected the access token."
+    },
+    "abort": {
+      "already_configured": "This TeamCity server is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Build configurations",
+        "description": "Choose the build configurations to add to Home Assistant. Leave empty to add all of them.",
+        "data": {
+          "build_types": "Build configurations"
+        }
+      }
+    },
+    "abort": {
+      "cannot_connect": "Could not connect to TeamCity.",
+      "invalid_auth": "TeamCity rejected the access token."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "running": { "name": "Running" },
+      "failing": { "name": "Failing" }
+    },
+    "button": {
+      "trigger_build": { "name": "Trigger build" }
+    },
+    "sensor": {
+      "queued_builds": { "name": "Queued builds" },
+      "running_builds": { "name": "Running builds" },
+      "last_build_status": {
+        "name": "Last build status",
+        "state": {
+          "success": "Success",
+          "failure": "Failure",
+          "unknown": "Unknown"
+        }
+      },
+      "last_build_finished": { "name": "Last build finished" }
+    }
+  },
+  "exceptions": {
+    "trigger_failed": {
+      "message": "Could not trigger the build: {error}"
+    }
+  }
+}
