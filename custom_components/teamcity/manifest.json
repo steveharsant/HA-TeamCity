@@ -1,6 +1,7 @@
 {
   "domain": "teamcity",
   "name": "TeamCity",
+  "categories": ["computers_network.cloud_developer_tools"],
   "codeowners": ["@steveharsant"],
   "config_flow": true,
   "documentation": "https://github.com/steveharsant/HA-TeamCity",
