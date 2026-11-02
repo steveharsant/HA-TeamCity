@@ -10,7 +10,7 @@
           "verify_ssl": "Verify SSL certificate"
         },
         "data_description": {
-          "url": "For example https://teamcity.example.com",
+          "url": "The address you open TeamCity at in your browser.",
           "token": "A TeamCity access token. It needs permission to run builds if you want to use the trigger buttons."
         }
       },
@@ -48,8 +48,8 @@
   },
   "entity": {
     "binary_sensor": {
-      "running": { "name": "Running" },
-      "failing": { "name": "Failing" }
+      "state": { "name": "State" },
+      "status": { "name": "Status" }
     },
     "button": {
       "trigger_build": { "name": "Trigger build" }

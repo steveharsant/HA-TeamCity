@@ -41,8 +41,8 @@ If the token expires or is revoked, Home Assistant asks you to re-authenticate.
 |---|---|
 | `sensor.…_last_build_status` | `success`, `failure` or `unknown` for the last finished build on the default branch. Attributes: build id, build number, status text, branch, start time, web URL |
 | `sensor.…_last_build_finished` | When that build finished |
-| `binary_sensor.…_failing` | On when the last finished default-branch build failed |
-| `binary_sensor.…_running` | On while a build of this configuration is running on any branch. Attributes: number queued, and each running build's number, branch, % complete and URL |
+| `binary_sensor.…_status` | On when the last finished default-branch build failed |
+| `binary_sensor.…_state` | On while a build of this configuration is running on any branch. Attributes: number queued, and each running build's number, branch, % complete and URL |
 | `button.…_trigger_build` | Queues a build of the default branch |
 
 ## Example automation
@@ -52,7 +52,7 @@ automation:
   - alias: Flash the lights when the deploy breaks
     triggers:
       - trigger: state
-        entity_id: binary_sensor.app_deploy_failing
+        entity_id: binary_sensor.app_deploy_status
         to: "on"
     actions:
       - action: light.turn_on

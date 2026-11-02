@@ -41,15 +41,15 @@ async def test_entity_states(
         == "2026-10-30T09:05:00+00:00"
     )
 
-    assert hass.states.get("binary_sensor.app_deploy_failing").state == STATE_ON
-    assert hass.states.get("binary_sensor.app_build_failing").state == STATE_OFF
-    assert hass.states.get("binary_sensor.lib_build_failing").state == STATE_UNKNOWN
+    assert hass.states.get("binary_sensor.app_deploy_status").state == STATE_ON
+    assert hass.states.get("binary_sensor.app_build_status").state == STATE_OFF
+    assert hass.states.get("binary_sensor.lib_build_status").state == STATE_UNKNOWN
 
-    running = hass.states.get("binary_sensor.app_build_running")
+    running = hass.states.get("binary_sensor.app_build_state")
     assert running.state == STATE_ON
     assert running.attributes["queued"] == 1
     assert running.attributes["builds"][0]["percentage_complete"] == 40
-    assert hass.states.get("binary_sensor.app_deploy_running").state == STATE_OFF
+    assert hass.states.get("binary_sensor.app_deploy_state").state == STATE_OFF
 
     queued = hass.states.get("sensor.teamcity_teamcity_example_com_queued_builds")
     assert queued.state == "2"

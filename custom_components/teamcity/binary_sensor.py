@@ -27,19 +27,19 @@ async def async_setup_entry(
         coordinator,
         async_add_entities,
         lambda build_type: (
-            RunningBinarySensor(coordinator, build_type),
-            ProblemBinarySensor(coordinator, build_type),
+            StateBinarySensor(coordinator, build_type),
+            StatusBinarySensor(coordinator, build_type),
         ),
     )
 
 
-class RunningBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
+class StateBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
     """On while any build of this configuration is running, on any branch."""
 
     _attr_device_class = BinarySensorDeviceClass.RUNNING
 
     def __init__(self, coordinator: TeamCityCoordinator, build_type: BuildType) -> None:
-        super().__init__(coordinator, build_type, "running")
+        super().__init__(coordinator, build_type, "state")
 
     @property
     def is_on(self) -> bool:
@@ -63,13 +63,13 @@ class RunningBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
         }
 
 
-class ProblemBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
+class StatusBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
     """On when the last finished build on the default branch failed."""
 
     _attr_device_class = BinarySensorDeviceClass.PROBLEM
 
     def __init__(self, coordinator: TeamCityCoordinator, build_type: BuildType) -> None:
-        super().__init__(coordinator, build_type, "failing")
+        super().__init__(coordinator, build_type, "status")
 
     @property
     def is_on(self) -> bool | None:
