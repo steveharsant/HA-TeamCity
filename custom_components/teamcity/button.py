@@ -4,13 +4,12 @@ from __future__ import annotations
 
 from homeassistant.components.button import ButtonEntity
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .api import BuildType, TeamCityError
-from .const import DOMAIN
+from .api import BuildType
 from .coordinator import TeamCityConfigEntry, TeamCityCoordinator
 from .entity import TeamCityBuildTypeEntity, async_add_build_type_entities
+from .services import async_trigger_build
 
 
 async def async_setup_entry(
@@ -34,12 +33,4 @@ class TriggerBuildButton(TeamCityBuildTypeEntity, ButtonEntity):
         super().__init__(coordinator, build_type, "trigger_build")
 
     async def async_press(self) -> None:
-        try:
-            await self.coordinator.client.trigger_build(self.build_type_id)
-        except TeamCityError as err:
-            raise HomeAssistantError(
-                translation_domain=DOMAIN,
-                translation_key="trigger_failed",
-                translation_placeholders={"error": str(err)},
-            ) from err
-        await self.coordinator.async_request_refresh()
+        await async_trigger_build(self.coordinator, self.build_type_id)

@@ -2,18 +2,62 @@
 
 from __future__ import annotations
 
+import logging
+from pathlib import Path
+
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.const import CONF_TOKEN, CONF_URL, CONF_VERIFY_SSL, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.typing import ConfigType
+from homeassistant.loader import async_get_integration
 
 from .api import TeamCityAuthenticationError, TeamCityClient, TeamCityError
-from .const import DOMAIN
+from .const import CARD_FILENAME, CARD_URL_PATH, DOMAIN
 from .coordinator import TeamCityConfigEntry, TeamCityCoordinator
 from .entity import server_device_info
+from .services import async_setup_services
+from .websocket import async_register_websocket_commands
 
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.BUTTON, Platform.SENSOR]
+_LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.SENSOR,
+    Platform.SWITCH,
+]
+
+CARD_PATH = Path(__file__).parent / "frontend" / CARD_FILENAME
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Register the actions, websocket commands and dashboard card."""
+    async_setup_services(hass)
+    async_register_websocket_commands(hass)
+    await _async_register_card(hass)
+    return True
+
+
+async def _async_register_card(hass: HomeAssistant) -> None:
+    """Serve the bundled card and load it into every dashboard."""
+    if not await hass.async_add_executor_job(CARD_PATH.is_file):
+        _LOGGER.error(
+            "The TeamCity card is missing at %s; install the integration from a "
+            "release, or build it with 'npm run build' in frontend/",
+            CARD_PATH,
+        )
+        return
+    await hass.http.async_register_static_paths(
+        [StaticPathConfig(CARD_URL_PATH, str(CARD_PATH), cache_headers=True)]
+    )
+    integration = await async_get_integration(hass, DOMAIN)
+    add_extra_js_url(hass, f"{CARD_URL_PATH}?v={integration.version}")
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: TeamCityConfigEntry) -> bool:

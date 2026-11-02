@@ -1,13 +1,22 @@
 {
   "domain": "teamcity",
   "name": "TeamCity",
-  "categories": ["computers_network.cloud_developer_tools"],
-  "codeowners": ["@steveharsant"],
+  "categories": [
+    "computers_network.cloud_developer_tools"
+  ],
+  "codeowners": [
+    "@steveharsant"
+  ],
   "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/steveharsant/HA-TeamCity",
   "integration_type": "service",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/steveharsant/HA-TeamCity/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

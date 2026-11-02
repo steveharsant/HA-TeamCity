@@ -99,12 +99,15 @@ async def test_options_flow_selects_build_types(
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
     assert result["type"] is FlowResultType.FORM
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {"build_types": ["App_Build"]}
+        result["flow_id"], {"build_types": ["App_Build"], "allow_non_admin_logs": True}
     )
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert config_entry.options == {"build_types": ["App_Build"]}
+    assert config_entry.options == {
+        "build_types": ["App_Build"],
+        "allow_non_admin_logs": True,
+    }
     assert hass.states.get("sensor.app_build_last_build_status") is not None
     assert hass.states.get("sensor.lib_build_last_build_status") is None
     assert hass.states.get("sensor.app_deploy_last_build_status") is None

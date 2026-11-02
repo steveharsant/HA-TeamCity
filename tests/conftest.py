@@ -2,12 +2,15 @@
 
 from collections.abc import Generator
 from datetime import UTC, datetime
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
+from homeassistant.components.frontend import DATA_EXTRA_MODULE_URL, UrlManager
+from homeassistant.core import HomeAssistant
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.teamcity.api import Build, BuildType, ServerInfo
+from custom_components.teamcity.api import Build, BuildType, QueuedBuild, ServerInfo
 from custom_components.teamcity.const import DOMAIN
 
 URL = "https://teamcity.example.com"
@@ -17,6 +20,24 @@ CONFIG = {"url": URL, "token": "secret", "verify_ssl": True}
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
     """Allow loading custom_components in every test."""
+
+
+@pytest.fixture(autouse=True)
+def mock_frontend(hass: HomeAssistant) -> UrlManager:
+    """Stand in for the frontend component, whose assets aren't installed in tests."""
+    hass.config.components.add("frontend")
+    extra_modules = UrlManager(lambda *_: None, [])
+    hass.data[DATA_EXTRA_MODULE_URL] = extra_modules
+    return extra_modules
+
+
+@pytest.fixture(autouse=True)
+def built_card(tmp_path: Path) -> Generator[Path]:
+    """Point the integration at a built card file."""
+    card = tmp_path / "teamcity-card.js"
+    card.write_text("customElements.define('teamcity-card', class {});")
+    with patch("custom_components.teamcity.CARD_PATH", card):
+        yield card
 
 
 def make_build_types() -> list[BuildType]:
@@ -97,7 +118,10 @@ def mock_client() -> Generator[AsyncMock]:
                 ),
             )
         ]
-        client.get_queued_build_type_ids.return_value = ["App_Build", "App_Deploy"]
+        client.get_queued_builds.return_value = [
+            QueuedBuild(id=201, build_type_id="App_Build"),
+            QueuedBuild(id=202, build_type_id="App_Deploy"),
+        ]
         yield client
 
 

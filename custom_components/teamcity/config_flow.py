@@ -26,7 +26,7 @@ from .api import (
     TeamCityClient,
     TeamCityConnectionError,
 )
-from .const import CONF_BUILD_TYPES, DOMAIN
+from .const import CONF_ALLOW_NON_ADMIN_LOGS, CONF_BUILD_TYPES, DOMAIN
 from .coordinator import TeamCityConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -128,7 +128,7 @@ class TeamCityConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class TeamCityOptionsFlow(OptionsFlow):
-    """Choose which build configurations become entities."""
+    """Choose which build configurations become entities, and who can read logs."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -159,6 +159,10 @@ class TeamCityOptionsFlow(OptionsFlow):
                     CONF_BUILD_TYPES,
                     default=entry.options.get(CONF_BUILD_TYPES, []),
                 ): SelectSelector(SelectSelectorConfig(options=options, multiple=True)),
+                vol.Optional(
+                    CONF_ALLOW_NON_ADMIN_LOGS,
+                    default=entry.options.get(CONF_ALLOW_NON_ADMIN_LOGS, False),
+                ): bool,
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

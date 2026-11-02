@@ -1,0 +1,43 @@
+trigger_build:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: teamcity
+            model: Build configuration
+
+set_paused:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          filter:
+            integration: teamcity
+            model: Build configuration
+    paused:
+      required: true
+      selector:
+        boolean:
+
+cancel_build:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: teamcity
+    build_id:
+      required: true
+      example: 12345
+      selector:
+        number:
+          min: 1
+          mode: box
+    comment:
+      required: false
+      example: Superseded by a newer commit
+      selector:
+        text:

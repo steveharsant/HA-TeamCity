@@ -34,10 +34,14 @@
   "options": {
     "step": {
       "init": {
-        "title": "Build configurations",
+        "title": "TeamCity options",
         "description": "Choose the build configurations to add to Home Assistant. Leave empty to add all of them.",
         "data": {
-          "build_types": "Build configurations"
+          "build_types": "Build configurations",
+          "allow_non_admin_logs": "Allow non-admins to view build logs"
+        },
+        "data_description": {
+          "allow_non_admin_logs": "Build logs can contain sensitive output. When off, only Home Assistant administrators can read them in the TeamCity card."
         }
       }
     },
@@ -48,15 +52,25 @@
   },
   "entity": {
     "binary_sensor": {
-      "state": { "name": "State" },
-      "status": { "name": "Status" }
+      "state": {
+        "name": "State"
+      },
+      "status": {
+        "name": "Status"
+      }
     },
     "button": {
-      "trigger_build": { "name": "Trigger build" }
+      "trigger_build": {
+        "name": "Trigger build"
+      }
     },
     "sensor": {
-      "queued_builds": { "name": "Queued builds" },
-      "running_builds": { "name": "Running builds" },
+      "queued_builds": {
+        "name": "Queued builds"
+      },
+      "running_builds": {
+        "name": "Running builds"
+      },
       "last_build_status": {
         "name": "Last build status",
         "state": {
@@ -65,12 +79,75 @@
           "unknown": "Unknown"
         }
       },
-      "last_build_finished": { "name": "Last build finished" }
+      "last_build_finished": {
+        "name": "Last build finished"
+      }
+    },
+    "switch": {
+      "paused": {
+        "name": "Paused"
+      }
     }
   },
   "exceptions": {
-    "trigger_failed": {
-      "message": "Could not trigger the build: {error}"
+    "action_failed": {
+      "message": "TeamCity could not complete the action: {error}"
+    },
+    "build_not_active": {
+      "message": "Build {build_id} is not running or queued."
+    },
+    "entry_not_found": {
+      "message": "No TeamCity server with config entry ID {entry_id}."
+    },
+    "entry_not_loaded": {
+      "message": "The TeamCity server {title} is not loaded."
+    },
+    "not_a_build_configuration": {
+      "message": "Device {device_id} is not a TeamCity build configuration."
+    }
+  },
+  "services": {
+    "trigger_build": {
+      "name": "Trigger build",
+      "description": "Queues a build of a build configuration's default branch.",
+      "fields": {
+        "device_id": {
+          "name": "Build configuration",
+          "description": "The build configuration device to build."
+        }
+      }
+    },
+    "set_paused": {
+      "name": "Set paused",
+      "description": "Pauses or unpauses a build configuration.",
+      "fields": {
+        "device_id": {
+          "name": "Build configuration",
+          "description": "The build configuration device to change."
+        },
+        "paused": {
+          "name": "Paused",
+          "description": "Whether the build configuration should be paused."
+        }
+      }
+    },
+    "cancel_build": {
+      "name": "Cancel build",
+      "description": "Stops a running build or removes a queued one.",
+      "fields": {
+        "config_entry_id": {
+          "name": "TeamCity server",
+          "description": "The TeamCity server the build runs on."
+        },
+        "build_id": {
+          "name": "Build ID",
+          "description": "The TeamCity build ID, as shown in the State sensor's attributes."
+        },
+        "comment": {
+          "name": "Comment",
+          "description": "Reason recorded on the cancelled build in TeamCity."
+        }
+      }
     }
   }
 }

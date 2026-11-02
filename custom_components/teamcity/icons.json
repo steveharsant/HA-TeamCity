@@ -1,11 +1,17 @@
 {
   "entity": {
     "button": {
-      "trigger_build": { "default": "mdi:play" }
+      "trigger_build": {
+        "default": "mdi:play"
+      }
     },
     "sensor": {
-      "queued_builds": { "default": "mdi:tray-full" },
-      "running_builds": { "default": "mdi:progress-clock" },
+      "queued_builds": {
+        "default": "mdi:tray-full"
+      },
+      "running_builds": {
+        "default": "mdi:progress-clock"
+      },
       "last_build_status": {
         "default": "mdi:help-circle-outline",
         "state": {
@@ -13,6 +19,25 @@
           "failure": "mdi:alert-circle-outline"
         }
       }
+    },
+    "switch": {
+      "paused": {
+        "default": "mdi:pause-circle-outline",
+        "state": {
+          "off": "mdi:play-circle-outline"
+        }
+      }
+    }
+  },
+  "services": {
+    "trigger_build": {
+      "service": "mdi:play"
+    },
+    "set_paused": {
+      "service": "mdi:pause"
+    },
+    "cancel_build": {
+      "service": "mdi:stop"
     }
   }
 }

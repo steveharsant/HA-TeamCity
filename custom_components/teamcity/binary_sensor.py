@@ -48,8 +48,10 @@ class StateBinarySensor(TeamCityBuildTypeEntity, BinarySensorEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         builds = self.coordinator.data.running.get(self.build_type_id, [])
+        queued_build_ids = self.coordinator.data.queued.get(self.build_type_id, [])
         return {
-            "queued": self.coordinator.data.queued[self.build_type_id],
+            "queued": len(queued_build_ids),
+            "queued_build_ids": queued_build_ids,
             "builds": [
                 {
                     "build_id": build.id,
